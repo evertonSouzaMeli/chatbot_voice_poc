@@ -20,7 +20,8 @@ export default function App() {
                 { input: { text: value}},
                 { headers: { Authorization: `Basic ${encodedKey}`, 'Content-Type': 'application/json' } });
 
-            Speech.speak(request.data.output.text[0])
+            const response = request.data.output.text[0]
+            Speech.speak(response)
         }
 
         catch(err){
