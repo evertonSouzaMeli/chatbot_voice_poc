@@ -23,6 +23,7 @@ export default function App() {
                 },
             })
             .then( async function (response) {
+                /** PEGAR AUDIO CONVERTIDO PRA TEXTO AQUI **/
                 console.log(response.data)
             })
             .catch(function (error) {
