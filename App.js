@@ -10,6 +10,9 @@ export default function App() {
     const [permission, setPermission] = React.useState("");
     const [recording, setRecording] = React.useState("");
 
+    const [userInput, setUserInput] = React.useState("");
+    const [botInput, setBotInput] = React.useState("")
+
     const sendMessageToChatbot = async (value) => {
         const key = "PJzIsPSS51vZx8VoQLdwyuXXvOZZd52uOUBp1KWmyZTu"
         const encodedKey = base64.encode(`apikey:${key}`)
@@ -21,6 +24,9 @@ export default function App() {
                 { headers: { Authorization: `Basic ${encodedKey}`, 'Content-Type': 'application/json' } });
 
             const response = request.data.output.text[0]
+
+            if(response === undefined) Speech.speak('Eu não entendi, você pode reformular a frase')
+            setBotInput(response)
             Speech.speak(response)
         }
 
@@ -44,6 +50,7 @@ export default function App() {
                 },
             })
             .then((response) => {
+                setUserInput(response.data)
                 sendMessageToChatbot(response.data)
             })
             .catch(function (error) {
@@ -90,6 +97,12 @@ export default function App() {
                 title={recording ? "Stop Recording" : "Start Recording"}
                 onPress={recording ? stopRecording : startRecording}
             />
+
+            <View>
+                <Text>Eu :{userInput}</Text>
+                <Text>Belive :{botInput}</Text>
+            </View>
+
             <StatusBar style="auto" />
         </View>
     );
