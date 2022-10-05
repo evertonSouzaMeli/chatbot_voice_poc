@@ -7,14 +7,13 @@ import axios from "axios";
 import base64 from 'react-native-base64';
 
 export default function App() {
-
     const [permission, setPermission] = React.useState("");
     const [recording, setRecording] = React.useState("");
 
     const [userInput, setUserInput] = React.useState("");
-    const [botInput, setBotInput] = React.useState("")
+    const [botResponse, setResponse] = React.useState("")
 
-    React.useEffect(() => { Speech.speak(botInput) }, [botInput])
+    React.useEffect(() => { Speech.speak(botResponse) }, [botResponse])
 
     const sendMessageToChatbot = async (value) => {
         const key = "PJzIsPSS51vZx8VoQLdwyuXXvOZZd52uOUBp1KWmyZTu"
@@ -29,7 +28,7 @@ export default function App() {
             const response = request.data.output.text[0]
 
             if(response === undefined) Speech.speak('Eu não entendi, você pode reformular a frase')
-            setBotInput(response)
+            botResponse(response)
         }
 
         catch(err){
@@ -102,7 +101,7 @@ export default function App() {
 
             <View>
                 <Text>Eu :{userInput}</Text>
-                <Text>Belive :{botInput}</Text>
+                <Text>Belive :{botResponse}</Text>
             </View>
 
             <StatusBar style="auto" />
