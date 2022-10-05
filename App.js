@@ -2,13 +2,34 @@ import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { Button, StyleSheet, Text, View } from "react-native";
 import { Audio } from "expo-av";
+import * as Speech from "expo-speech";
 import axios from "axios";
+import base64 from 'react-native-base64';
 
 export default function App() {
     const [permission, setPermission] = React.useState("");
     const [recording, setRecording] = React.useState("");
 
-    const sendMessage = (recording) => {
+    const sendMessageToChatbot = async (value) => {
+        const key = "PJzIsPSS51vZx8VoQLdwyuXXvOZZd52uOUBp1KWmyZTu"
+        const encodedKey = base64.encode(`apikey:${key}`)
+        const baseUrl = 'https://api.us-south.assistant.watson.cloud.ibm.com/instances/11a13d07-78ef-4242-89cc-782d5bd13ceb/v1/workspaces/2f75e230-f055-4276-a75b-b2c2ae8ba53a/message'
+
+        try{
+            const request = await axios.post(baseUrl.concat('?version=2018-09-20'),
+                { input: { text: value}}, { headers: { Authorization: `Basic ${encodedKey}`, 'Content-Type': 'application/json' } });
+
+            const response = request.data.output.text[0]
+
+            Speech.speak(response)
+        }
+
+        catch(err){
+            console.log(err)
+        }
+    }
+
+    const speechToText = (recording) => {
         const formData = new FormData();
         formData.append("file", {
             uri: recording.getURI(),
@@ -22,9 +43,8 @@ export default function App() {
                     "Content-Type": "multipart/form-data",
                 },
             })
-            .then( async function (response) {
-                /** PEGAR AUDIO CONVERTIDO PRA TEXTO AQUI **/
-                console.log(response.data)
+            .then((response) => {
+                sendMessageToChatbot(response.data)
             })
             .catch(function (error) {
                 console.log(error);
@@ -60,7 +80,7 @@ export default function App() {
         await recording.stopAndUnloadAsync();
         let resp = recording
         setRecording(undefined)
-        sendMessage(resp)
+        speechToText(resp)
     }
 
     return (
@@ -81,17 +101,5 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         alignItems: "center",
         justifyContent: "center",
-    },
-    row: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    fill: {
-        flex: 1,
-        margin: 16,
-    },
-    button: {
-        margin: 16,
-    },
+    }
 });
