@@ -102,15 +102,11 @@ export default function App() {
             <Text>{permission}</Text>
 
             <View>
-                <TouchableOpacity style={styles.recordButton} onLongPress={startRecording} onPressOut={stopRecording} delayLongPress={300}>
+                <TouchableOpacity style={styles.recordButton} onLongPress={startRecording} onPressOut={stopRecording} delayLongPress={250}>
                     {
                         !rec ?  <Icon name={"microphone"}  size={75} color="white" /> : <Icon name={"stop"}  size={75} color="white" />
                     }
                 </TouchableOpacity>
-            </View>
-
-            <View>
-                <Text style={{ color: 'white' }}>{botResponse}</Text>
             </View>
 
             <StatusBar style="auto" />
