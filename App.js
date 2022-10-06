@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { TouchableOpacity, StyleSheet, Text, View } from "react-native";
+import { TouchableOpacity, Button, StyleSheet, Text, View } from "react-native";
 import { Audio } from "expo-av";
 import * as Speech from "expo-speech";
 import axios from "axios";
@@ -12,6 +12,7 @@ export default function App() {
     const [permission, setPermission] = React.useState("");
     const [recording, setRecording] = React.useState("");
     const [rec, setRec] = React.useState(false);
+
 
     const [userInput, setUserInput] = React.useState("");
     const [botResponse, setBotResponse] = React.useState("")
@@ -65,9 +66,9 @@ export default function App() {
 
     async function startRecording() {
         try {
-            setRec(true)
             const permission = await Audio.requestPermissionsAsync();
             if (permission.status === "granted") {
+                setRec(true)
                 await Audio.setAudioModeAsync({
                     allowsRecordingIOS: true,
                     playsInSilentModeIOS: true,
@@ -83,23 +84,20 @@ export default function App() {
             } else {
                 setPermission("Please grant permission to app to access microphone");
             }
-            setRec(true)
         } catch (err) {
             console.error("Failed to start recording", err);
         }
     }
 
     async function stopRecording() {
+        setRec(false)
         await recording.stopAndUnloadAsync();
         let resp = recording
         setRecording(undefined)
         speechToText(resp)
-        setRec(false)
     }
 
     return (
-
-
         <View style={styles.container}>
             <Text>{permission}</Text>
 
@@ -112,7 +110,7 @@ export default function App() {
             </View>
 
             <View>
-                <Text style={styles.text}>{botResponse}</Text>
+                <Text style={{ color: 'white' }}>{botResponse}</Text>
             </View>
 
             <StatusBar style="auto" />
@@ -127,12 +125,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
     },
-    text: {
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: '18',
-        textAlign: 'center'
-    },
     recordButton: {
         borderWidth:1,
         borderColor:'#EC2E2E',
@@ -144,3 +136,4 @@ const styles = StyleSheet.create({
         backgroundColor: "#EC2E2E"
     }
 });
+
