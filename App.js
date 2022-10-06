@@ -1,14 +1,17 @@
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { TouchableOpacity, StyleSheet, Text, View } from "react-native";
 import { Audio } from "expo-av";
 import * as Speech from "expo-speech";
 import axios from "axios";
 import base64 from 'react-native-base64';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 
 export default function App() {
     const [permission, setPermission] = React.useState("");
     const [recording, setRecording] = React.useState("");
+    const [rec, setRec] = React.useState(false);
 
     const [userInput, setUserInput] = React.useState("");
     const [botResponse, setBotResponse] = React.useState("")
@@ -62,6 +65,7 @@ export default function App() {
 
     async function startRecording() {
         try {
+            setRec(true)
             const permission = await Audio.requestPermissionsAsync();
             if (permission.status === "granted") {
                 await Audio.setAudioModeAsync({
@@ -79,6 +83,7 @@ export default function App() {
             } else {
                 setPermission("Please grant permission to app to access microphone");
             }
+            setRec(true)
         } catch (err) {
             console.error("Failed to start recording", err);
         }
@@ -89,19 +94,25 @@ export default function App() {
         let resp = recording
         setRecording(undefined)
         speechToText(resp)
+        setRec(false)
     }
 
     return (
+
+
         <View style={styles.container}>
             <Text>{permission}</Text>
-            <Button
-                title={recording ? "Stop Recording" : "Start Recording"}
-                onPress={recording ? stopRecording : startRecording}
-            />
 
             <View>
-                <Text>Eu :{userInput}</Text>
-                <Text>Belive :{botResponse}</Text>
+                <TouchableOpacity style={styles.recordButton} onLongPress={startRecording} onPressOut={stopRecording} delayLongPress={300}>
+                    {
+                        !rec ?  <Icon name={"microphone"}  size={75} color="white" /> : <Icon name={"stop"}  size={75} color="white" />
+                    }
+                </TouchableOpacity>
+            </View>
+
+            <View>
+                <Text style={styles.text}>{botResponse}</Text>
             </View>
 
             <StatusBar style="auto" />
@@ -112,8 +123,24 @@ export default function App() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff",
+        backgroundColor: "#11A8F4",
         alignItems: "center",
         justifyContent: "center",
+    },
+    text: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: '18',
+        textAlign: 'center'
+    },
+    recordButton: {
+        borderWidth:1,
+        borderColor:'#EC2E2E',
+        alignItems:'center',
+        justifyContent:'center',
+        width:200,
+        height:200,
+        borderRadius: 100,
+        backgroundColor: "#EC2E2E"
     }
 });
